@@ -22,8 +22,7 @@ import {
     } from "@clerk/nextjs";
 
 
-export const Header = () => {
-    
+export const Header =  ({user}) => {
     const { setTheme } = useTheme()
   return (
     <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 supports-[backdrop-filter]:bg-background/60">
@@ -76,6 +75,12 @@ export const Header = () => {
                   >
                     <BracesIcon className="h-4 w-4" />
                     FakeData Generator
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/data-vault" className="flex items-center gap-2">
+                    <ShieldQuestion className="h-4 w-4" />
+                    Data Vault
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>

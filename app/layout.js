@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import Header from "@/components/Header";
+import HeaderServer from "@/components/HeaderServer";
 import { ClerkProvider } from "@clerk/nextjs";
 import {dark} from '@clerk/themes'
 
@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             {/* header */}
-            <Header />
+            <HeaderServer />
             {/* main content */}
             {children}
           </ThemeProvider>
