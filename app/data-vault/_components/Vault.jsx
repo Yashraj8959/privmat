@@ -1,165 +1,111 @@
-// components/Vault.jsx
-
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import { LockKeyhole, ChevronRightIcon } from 'lucide-react';
+import { Loader2 } from "lucide-react";
 const Vault = () => {
   const [vaultItems, setVaultItems] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [newVaultItem, setNewVaultItem] = useState({
-    website: "",
-    username: "",
-    password: "",
-    notes: "",
-  });
+  const router = useRouter();
 
   useEffect(() => {
-    // Fetch vault items when the component mounts
     const fetchVaultItems = async () => {
-      setIsLoading(true);
-      setError(null);
-
       try {
-        const response = await fetch('/api/vault');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
+        const res = await fetch("/api/vault");
+        if (!res.ok) throw new Error("Failed to fetch vault items");
+        const data = await res.json();
         setVaultItems(data);
+        setFilteredItems(data);
       } catch (err) {
-        console.error("Failed to fetch vault items:", err);
-        setError(err.message || "Failed to fetch vault items");
+        console.error("Fetch error:", err); // Log detailed error
+        setError("Failed to load vault items. Please try again later."); // User-friendly message
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchVaultItems();
-  }, []); // Empty dependency array means this runs only once on component mount
+  }, []);
 
-  const handleInputChange = (e) => {
-    setNewVaultItem({ ...newVaultItem, [e.target.name]: e.target.value });
+  useEffect(() => {
+    const filtered = vaultItems.filter((item) =>
+      item.website.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredItems(filtered);
+  }, [searchQuery, vaultItems]);
+
+  const handleItemClick = (id) => {
+    router.push(`/data-vault/${id}`);
   };
-
-  const handleCreateVaultItem = async () => {
-    try {
-      const response = await fetch('/api/vault', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newVaultItem),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      // Refresh the vault items after creating a new one
-      const data = await response.json()
-      setVaultItems(prevItems => [...prevItems, data]) //Appending data
-
-    } catch (error) {
-      console.error("Error creating vault item:", error);
-      setError(error.message || "Failed to create vault item");
-    } finally {
-      setNewVaultItem({ website: "", username: "", password: "", notes: "" });
-       // Clear the input fields
-    }
-  };
+  const handleAddNewCredential = () => {
+    router.push("/data-vault/add-new-data");
+  }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-3xl mx-auto mt-10">
       <CardHeader>
-        <CardTitle>Data Vault</CardTitle>
+        <CardTitle>{vaultItems.length} sites and apps</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {isLoading && <p>Loading vault items...</p>}
-        {error && <p className="text-red-500">Error: {error}</p>}
 
-        {/* Display Vault Items */}
-        {vaultItems.length > 0 ? (
-          <ul>
-            {vaultItems.map((item,key) => (
-              <li key={key} className="border rounded-md p-4">
-                <p><strong>Website:</strong> {item.website}</p>
-                <p><strong>Username:</strong> {item.username}</p>
-                 <p><strong>Password:</strong> {item.encryptedPassword}</p>
-                  <p><strong>Notes:</strong> {item.notes}</p>
-                {/* Add more details here */}
+      <CardContent className="space-y-6">
+        {/* Search Input */}
+        <div className="flex items-center gap-2 border rounded-md px-3 py-2">
+          <Search aria-hidden="true" className="h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search passwords"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          />
+        </div>
+
+        {/* Vault Items List */}
+        {isLoading ? (
+          <div className="flex justify-center items-center py-10">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <span className="ml-2">Loading...</span>
+          </div>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : vaultItems.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-muted-foreground">Your vault is empty.</p>
+            <Button variant="outline" className="mt-4" onClick={handleAddNewCredential}>
+              Add Your First Credential
+            </Button>
+          </div>
+        ) : filteredItems.length > 0 ? (
+          <ul className="flex flex-col gap-2">
+            {filteredItems.map((item) => (
+              <li
+                key={item.id}
+                onClick={() => handleItemClick(item.id)}
+                className="flex items-center justify-between p-3 hover:bg-muted cursor-pointer border rounded-md"
+              >
+                <div className="flex items-center gap-3">
+                  <LockKeyhole aria-hidden="true" className="w-6 h-6 text-muted-foreground" />
+                  <span className="text-sm font-medium">{item.website}</span>
+                </div>
+                <ChevronRightIcon aria-hidden="true" className="w-4 h-4 text-muted-foreground" />
               </li>
             ))}
           </ul>
         ) : (
-          !isLoading && <p>No vault items found.</p>
+          <p>No matching results.</p>
         )}
-
-        {/* Add New Vault Item Form */}
-        <div>
-          <h3 className="text-lg font-semibold">Add New Item</h3>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="website" className="text-right">
-                Website
-              </Label>
-              <Input
-                type="text"
-                id="website"
-                name="website"
-                value={newVaultItem.website}
-                onChange={handleInputChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
-              </Label>
-              <Input
-                type="text"
-                id="username"
-                name="username"
-                value={newVaultItem.username}
-                onChange={handleInputChange}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="password" className="text-right">
-                Password
-              </Label>
-              <Input
-                type="password"
-                id="password"
-                name="password"
-                value={newVaultItem.password}
-                onChange={handleInputChange}
-                className="col-span-3"
-              />
-            </div>
-             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="notes" className="text-right">
-                Notes
-              </Label>
-              <Input
-                type="text"
-                id="notes"
-                name="notes"
-                value={newVaultItem.notes}
-                onChange={handleInputChange}
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <Button onClick={handleCreateVaultItem}>Create Vault Item</Button>
-        </div>
       </CardContent>
+
+      <div className="flex justify-end p-4">
+        <Button variant="outline" onClick={handleAddNewCredential}>Add New Credential</Button>
+      </div>
     </Card>
   );
 };

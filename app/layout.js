@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import HeaderServer from "@/components/HeaderServer";
 import { ClerkProvider } from "@clerk/nextjs";
 import {dark} from '@clerk/themes'
+import { Toaster } from "react-hot-toast"
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +43,8 @@ export default function RootLayout({ children }) {
             <HeaderServer />
             {/* main content */}
             {children}
+            <Toaster />
+
           </ThemeProvider>
       </body>
     </html>

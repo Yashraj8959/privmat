@@ -19,6 +19,7 @@ model User {
   clerkUserId   String    @unique // clerk user id
   email       String        @unique
   name        String?
+  vaultPassword String? // Argon2 hash of the user's main vault password
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   userApps    UserApp[]
@@ -72,14 +73,15 @@ model VaultItem {
   id             String   @id @default(uuid())
   user           User     @relation(fields: [userId], references: [id])
   userId         String
-  website       String   // Website URL (e.g., "example.com")
-  username      String   // Username for the website
-  encryptedPassword String // Stores the AES-GCM ciphertext of the password
-  iv             String   // Stores the Initialization Vector (IV) as a string
-  salt          String   // Stores the salt for key derivation
-  notes         String?  //Nullable field for any additional notes or information
+  website        String   // Website name/URL (unencrypted for display/lookup)
+  encryptedData  String   // Stores the Base64 encoded AES-CBC (or GCM) ciphertext of the combined data (username, password, notes, etc.)
+  iv             String   // Stores the Base64 encoded Initialization Vector (IV)
+  salt           String   // Stores the Base64 encoded salt used for PBKDF2 key derivation
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  // Optional index if you query often by userId and website
+  // @@index([userId, website])
 }
 
 model DataBreach {
