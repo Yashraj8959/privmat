@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server';
 import { getAuth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@/lib/generated/prisma"; // Adjust path
+import { verify } from 'argon2';
+import { vaultEncrypt } from '@/lib/vault-crypto';
 
 const prisma = new PrismaClient();
 
