@@ -3,7 +3,7 @@ import React from 'react'
 import Image from 'next/image'
 import { Button } from "./ui/button";
 import { useTheme } from "next-themes"
-import {Fingerprint, ShieldQuestion, LayoutDashboard,ChevronDown, Moon, Sun, TrendingUp, BracesIcon } from "lucide-react"
+import {Fingerprint, ShieldQuestion, LayoutDashboard,ChevronDown, Moon, Sun, TrendingUp, BracesIcon, FolderLock } from "lucide-react"
 import Link from 'next/link'
 
 import {
@@ -79,7 +79,7 @@ export const Header =  ({user}) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/data-vault" className="flex items-center gap-2">
-                    <ShieldQuestion className="h-4 w-4" />
+                    <FolderLock className="h-4 w-4" />
                     Data Vault
                   </Link>
                 </DropdownMenuItem>
