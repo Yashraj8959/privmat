@@ -53,9 +53,11 @@ export default async function handler(req, res) {
 
       if (responseData.ExposedBreaches && responseData.ExposedBreaches.breaches_details) {
         for (const breachDetail of responseData.ExposedBreaches.breaches_details) {
+            const normalizedName = breachDetail.breach.trim().toLowerCase();
+
            // 1. Find or Create DataBreach record in your DB
            let dbBreach = await prisma.dataBreach.findUnique({
-             where: { name: breachDetail.breach }, // Assuming 'breach' name is unique identifier
+             where: { name: normalizedName }, // Assuming 'breach' name is unique identifier
            });
 
            if (!dbBreach) {
@@ -71,9 +73,10 @@ export default async function handler(req, res) {
                   console.error(`Error parsing date for breach ${breachDetail.breach}: ${breachDetail.xposed_date}`, dateError);
               }
 
+              try {
              dbBreach = await prisma.dataBreach.create({
                data: {
-                 name: breachDetail.breach,
+                 name: normalizedName,
                  breachDate: breachDate,
                  description: breachDetail.details || null,
                  dataTypesLeaked: breachDetail.xposed_data || null, // Directly use the string if available
@@ -81,8 +84,44 @@ export default async function handler(req, res) {
                  // Add other fields as available (e.g., domain, industry) if you add them to your schema
                },
              });
-           }
+           }catch (error) {
+            if (error.code === 'P2002') {
+              console.warn(`⚠️ Duplicate breach found while creating: ${normalizedName}. Fetching existing one.`);
+              dbBreach = await prisma.dataBreach.findUnique({
+                where: { name: normalizedName },
+              });
+            } else {
+              throw error;
+            }
+          }
+        }
 
+        console.log("Upserting UserBreach for:", {
+            userId: dbUser.id,
+            dataBreachId: dbBreach.id
+          });
+          // Check if UserBreach already exists
+const existingBreach = await prisma.userBreach.findUnique({
+    where: {
+      userId_dataBreachId: {
+        userId: dbUser.id,
+        dataBreachId: dbBreach.id,
+      }
+    }
+  });
+  
+  let updatedEmails = [];
+  
+  if (existingBreach?.emailCompromised) {
+    // Safely merge and dedupe
+    updatedEmails = Array.from(new Set([
+      ...existingBreach.emailCompromised.filter(e => typeof e === 'string'),
+      email
+    ]));
+  } else {
+    updatedEmails = [email];
+  }
+ 
            // 2. Create UserBreach link if it doesn't exist
            await prisma.userBreach.upsert({
              where: {
@@ -91,18 +130,20 @@ export default async function handler(req, res) {
                  dataBreachId: dbBreach.id,
                }
              },
-             update: {}, // No update needed
+             update: {
+                emailCompromised: updatedEmails,
+             }, 
              create: {
                userId: dbUser.id,
                dataBreachId: dbBreach.id,
-               emailCompromised: email, // Store which email was compromised
+               emailCompromised: updatedEmails, // Store which email was compromised
              }
            });
 
            // 3. Prepare data for frontend response
            breachesFoundForFrontend.push({
              id: dbBreach.id, // Send the ID for potential linking
-             name: dbBreach.name,
+             name: breachDetail.breach,
              date: dbBreach.breachDate.toISOString().split('T')[0], // Format date as YYYY-MM-DD
              description: dbBreach.description,
              compromisedData: dbBreach.dataTypesLeaked?.split(';') || [], // Split the string

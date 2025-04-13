@@ -102,9 +102,9 @@ model UserBreach {
   userId    String
   dataBreach DataBreach @relation(fields: [dataBreachId], references: [id])
   dataBreachId String
-  emailCompromised String?
+  emailCompromised String[]  // <- change from String to String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, dataBreachId]) //Prevents duplicate entries
+  @@unique([userId, dataBreachId], name: "userId_dataBreachId") //Prevents duplicate entries
 }
