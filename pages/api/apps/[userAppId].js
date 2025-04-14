@@ -2,6 +2,8 @@
 
 import { getAuth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@/lib/generated/prisma";
+import { calculateAppRiskScore } from '@/lib/riskCalculator'; // Import calculator
+
 
 const prisma = new PrismaClient();
 
@@ -71,8 +73,14 @@ export default async function handler(req, res) {
         data: updateData,
         include: { app: true } // Return the updated data with app details
       });
+      
+      // --- Calculate Risk Score ---
+      const riskScore = calculateAppRiskScore(updatedUserApp);
 
-      return res.status(200).json(updatedUserApp);
+      return res.status(200).json({
+        ...updatedUserApp,
+        riskScore: riskScore, // Include the calculated risk score
+      });
 
     // --- Handle DELETE Request ---
     } else if (req.method === 'DELETE') {

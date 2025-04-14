@@ -2,6 +2,10 @@
 
 import { getAuth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@/lib/generated/prisma";
+import { extractDomain } from "@/lib/urlUtil";
+import axios from 'axios'; // Make sure axios is imported
+import { calculateAppRiskScore, calculateOverallRisk } from '@/lib/riskCalculator'; // Import calculators
+
 
 const prisma = new PrismaClient();
 
@@ -33,8 +37,24 @@ export default async function handler(req, res) {
         include: { app: true },
         orderBy: { createdAt: 'desc' }
       });
-      res.status(200).json(userApps);
-
+      // --- 3. Calculate Risk Score for each app ---
+      const appsWithScores = userApps.map(ua => {
+        // Pass the whole userApp object (which includes ua.app) to the calculator
+        const riskScore = calculateAppRiskScore(ua);
+        return {
+          ...ua,
+          riskScore: riskScore,
+        };
+      });
+      
+      // --- 4. Calculate Overall Risk ---
+      const overallRisk = calculateOverallRisk(appsWithScores);
+      
+      // --- 5. Return the enhanced data ---
+      res.status(200).json({
+         trackedApps: appsWithScores,
+         overallRisk: overallRisk // Include overall risk
+      });
     } catch (error) {
       console.error("GET /api/apps Error:", error);
       res.status(500).json({ error: "Failed to fetch tracked apps" });
@@ -80,18 +100,42 @@ export default async function handler(req, res) {
           // url: url || null,
         },
       });
+      let hasKnownBreachesResult = null; // Default to unknown
+      let checkPerformed = false;
       
       if (!app) {
         // App doesn't exist, create it
+        const domain = extractDomain(normalizedUrl);
+  if (domain) {
+    try {
+      const apiUrl = `https://api.xposedornot.com/v1/breaches?domain=${encodeURIComponent(domain)}`;
+      const xposedResponse = await axios.get(apiUrl, {
+         validateStatus: (status) => (status >= 200 && status < 300) || status === 404,
+      });
+      if (xposedResponse.status === 200 && xposedResponse.data?.["Exposed Breaches"]?.length > 0) {
+        hasKnownBreachesResult = true; // Breaches found
+      } else if (xposedResponse.status === 200 || xposedResponse.status === 404) {
+        hasKnownBreachesResult = false; // Checked, none found
+      }
+      checkPerformed = true;
+      console.log(`XposedOrNot check for domain ${domain}: ${hasKnownBreachesResult}`);
+    } catch (apiError) {
+      console.error(`Error checking XposedOrNot for domain ${domain}:`, apiError.message);
+      // Keep hasKnownBreachesResult as null if API fails
+    }
+  }
+        // Create the App record with the breach check result
         app = await prisma.app.create({
           data: {
             name: name,
             url: normalizedUrl, // Use the normalized URL
+            hasKnownBreaches: hasKnownBreachesResult, // Store the result
+            lastBreachCheck: checkPerformed ? new Date() : null, // Store check time
           },
         });
-        console.log(`Created new App record: ID ${app.id}, Name: ${name}, URL: ${normalizedUrl}`);
+        console.log(`Created new App record`);
       } else {
-         console.log(`Found existing App record: ID ${app.id}, Name: ${name}, URL: ${normalizedUrl}`);
+         console.log(`Found existing App record`);
       }
       // Now 'app' holds the ID of either the found or newly created app
 
@@ -124,8 +168,13 @@ export default async function handler(req, res) {
         }
       });
 
+      // --- 5b. Calculate Risk Score ---
+      const riskScore = calculateAppRiskScore(newUserApp); // Calculate based on the saved data
       // --- 6. Return Success Response ---
-      res.status(201).json(newUserApp); // Return the newly created UserApp object
+      res.status(201).json({
+        ...newUserApp,
+        riskScore: riskScore, // Include the calculated risk score
+      }); // Return the newly created UserApp object
 
     } catch (error) {
        // Handle potential unique constraint violation if upsert fails unexpectedly

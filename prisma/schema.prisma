@@ -34,6 +34,9 @@ model App {
   id        String    @id @default(uuid())
   name      String
   url       String?
+  hasKnownBreaches   Boolean?  // null = unchecked, true = breached, false = checked & clear
+  lastBreachCheck    DateTime? // When was this domain last checked against the API?
+  breachCount     Int?      // Optional: Store the number of breaches found
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   userApps  UserApp[]
