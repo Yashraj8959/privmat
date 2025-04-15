@@ -1,6 +1,7 @@
 "use client"
 import Link from 'next/link'
 import { Button } from './ui/button'
+import Image from 'next/image'
 import { TypeAnimation } from 'react-type-animation'; // For animated text
 
 const HeroSection = () => {
@@ -36,8 +37,20 @@ const HeroSection = () => {
             Learn More
           </Button>
         </div>
-            
+        
+        <div className='hero-image-wrapper mt-10 md:mt-4 flex items-center justify-center' >
+                <div  className='hero-image'>
+                    <Image 
+                    src={"/hero5.png"}
+                    alt="Dashboard Preview"
+                    width={500}
+                    height={500}
+                    // className='rounded-lg shadow-2xl  mx-auto'
+                    priority
+                    />
+                </div>
         </div>
+      </div>
     </section>
   )
 }

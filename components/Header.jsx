@@ -25,7 +25,7 @@ import {
 export const Header =  ({user}) => {
     const { setTheme } = useTheme()
   return (
-    <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 supports-[backdrop-filter]:bg-background/60">
+    <header className="fixed top-0 w-full border-b backdrop-blur-md z-50 supports-[backdrop-filter]:bg-slate-950/60">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
       <Link href="/">
           <Image
@@ -116,7 +116,7 @@ export const Header =  ({user}) => {
           </SignedIn>
 
         {/* toggle mode for themes */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
                   <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -135,7 +135,7 @@ export const Header =  ({user}) => {
                   System
                 </DropdownMenuItem>
               </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
         
         </div>
       </nav>
