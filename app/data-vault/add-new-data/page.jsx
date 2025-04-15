@@ -85,12 +85,12 @@ const AddNewData = () => {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-30 md:py-34 lg:py-42">
-      <Card className="abc w-auto max-w-2xl mx-auto">
+      <Card className="abc w-auto max-w-2xl mx-auto overflow-hidden">
         <CardHeader>
           <CardTitle>Add New Credential</CardTitle>
           <CardDescription>Securely store a new website credential.</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4">
+        <CardContent className="grid gap-4 items-center justify-center  ">
           {/* Website Input */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="website" className="text-right">

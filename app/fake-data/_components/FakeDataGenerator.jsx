@@ -1,7 +1,8 @@
 "use client";
 import { useState } from 'react';
-import { Button } from './ui/button'; // Assuming you have a Button component
+import { Button } from '@/components/ui/button'; // Assuming you have a Button component
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Braces } from 'lucide-react';
 
 const FakeDataGenerator = () => {
   const [fakeData, setFakeData] = useState(null);
@@ -26,11 +27,11 @@ const FakeDataGenerator = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle>Generate Fake Data</CardTitle>
+    <Card className="w-full max-w-md mx-auto ">
+      <CardHeader className="text-center">
+        <CardTitle className="flex items-center justify-center gap-2"><Braces />Fake Data</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 flex flex-col justify-center">
         <Button onClick={generateFakeData} disabled={isLoading}>
           {isLoading ? "Generating..." : "Generate Data"}
         </Button>

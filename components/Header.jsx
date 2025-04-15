@@ -27,13 +27,14 @@ export const Header =  ({user}) => {
   return (
     <header className="fixed top-0 w-full border-b backdrop-blur-md z-50 supports-[backdrop-filter]:bg-slate-950/60">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
-      <Link href="/">
+      <Link href="/" className="h-full flex items-center">
+          {/* Logo */}
           <Image
             src={"/privmatLogo.png"}
             alt="PrivMat"
             width={200}
             height={80}
-            className="h-14 py-1 w-auto object-contain "
+            className="h-11 md:h-12 lg:h-14   py-1 w-auto object-contain "
           />
         </Link>
         {/* Action Buttons */}
