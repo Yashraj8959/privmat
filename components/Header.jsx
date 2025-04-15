@@ -106,15 +106,21 @@ export const Header =  ({user}) => {
             <UserButton
               appearance={{
                 elements: {
+                  card: {
+                    backgroundColor: "rgb(2 6 23)", // Change this to your desired color
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                  },
                   avatarBox: "w-10 h-10",
                   userButtonPopoverCard: "shadow-xl",
                   userPreviewMainIdentifier: "font-semibold",
+                },
+                variables: {
+                  colorBackground: "rgb(2 6 23)", // fallback/global background
                 },
               }}
             //   afterSignOutUrl="/"
             />
           </SignedIn>
-
         {/* toggle mode for themes */}
         {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
