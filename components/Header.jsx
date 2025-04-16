@@ -40,7 +40,7 @@ export const Header =  ({user}) => {
         {/* Action Buttons */}
         <div className="flex items-center space-x-2 md:space-x-4">
           <SignedIn>
-            <Link href="/">
+            <Link href="/dashboard">
               <Button
                 variant="outline"
                 className="hidden md:inline-flex items-center gap-2"
