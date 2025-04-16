@@ -1,28 +1,33 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+// Define which routes are protected
 const isProtectedRoute = createRouteMatcher([
   '/data-vault(.*)',
   '/fake-data(.*)',
-])
-export default clerkMiddleware(async (auth, req)=>{
-  const {userId} = await auth()
-  // console.log("🔐 Clerk middleware: userId =", userId);
-  // console.log("🛡️ Protected route match:", isProtectedRoute(req));
+  '/api/breaches(.*)',
+]);
 
+export default clerkMiddleware(async (auth, req) => {
+  // Await the auth function to get the user data
+  const { userId } = await auth();  // Make sure this is awaited properly
+
+  console.log("🔐 Clerk middleware: userId =", userId);
+
+  // Check if the route is protected and user is not authenticated
   if (!userId && isProtectedRoute(req)) {
     console.log("🔒 Redirecting to sign-in...");
 
-    const {redirectToSignIn}= await auth()
-    return redirectToSignIn()
+    const { redirectToSignIn } = await auth(); // This will handle redirect to sign-in if needed
+    return redirectToSignIn();
   }
-  return NextResponse.next();
+
+  return NextResponse.next();  // Continue with the request if authenticated
 });
 
 export const config = {
   matcher: [
-    // Match all routes except static and Next internals
-    '/((?!_next|.*\\..*).*)',
-    '/(api|trpc)(.*)',
+    '/((?!_next|.*\\..*).*)', // Matches everything except Next.js internals
+    '/(api|trpc)(.*)', // Matches API routes (e.g., /api/breaches)
   ],
 };

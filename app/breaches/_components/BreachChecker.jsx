@@ -18,7 +18,7 @@ const BreachChecker = () => {
     setBreaches(null); // Reset previous results
 
     try {
-      const response = await fetch('/api/breaches/check', {
+      const response = await fetch('/api/breaches', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
