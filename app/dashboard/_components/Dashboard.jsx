@@ -79,12 +79,12 @@ export default function Dashboard() {
     return <div className="flex justify-center items-center h-screen">
             <div className="w-36 h-36 sm:w-48 sm:h-48 flex-shrink-0">
             <DotLottieReact
-            src="/loader.lottie" // Find a relevant Lottie animation
+            src="/lock.lottie" // Find a relevant Lottie animation
             loop
             autoplay
             style={{ width: '100%', height: '100%'}}
             />
-            </div>;
+            </div>
     </div>
   }
 
@@ -103,11 +103,11 @@ export default function Dashboard() {
 
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6"> {/* Adjusted grid */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 lg:grid-rows-[auto_160px_auto] gap-6 p-6"> {/* Adjusted grid */}
 
       {/* --- Welcome Banner (Spans more columns) --- */}
-      <Card className="lg:col-span-2 xl:col-span-3 rounded-xl shadow-sm overflow-hidden">
-        <CardContent className="p-6 flex flex-col sm:flex-row justify-between items-center bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/30 dark:via-purple-950/30 dark:to-pink-950/30">
+      <Card className="lg:col-span-2 xl:col-span-3 rounded-xl shadow-sm overflow-hidden align-centre bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/30 dark:via-purple-950/30 dark:to-pink-950/30 py-0">
+        <CardContent className="p-6 flex flex-col sm:flex-row justify-between items-center ">
           <div className="mb-4 sm:mb-0">
             <h2 className="text-2xl font-semibold mb-1">
               Welcome back, {username}! 👋
@@ -120,7 +120,7 @@ export default function Dashboard() {
           </div>
           <div className="w-36 h-36 sm:w-48 sm:h-48 flex-shrink-0">
             <DotLottieReact
-              src="/loader.lottie" // Find a relevant Lottie animation
+              src="/drone-o.lottie" // Find a relevant Lottie animation
               loop
               autoplay
               style={{ width: '100%', height: '100%'}}
@@ -130,7 +130,7 @@ export default function Dashboard() {
       </Card>
 
       {/* --- Overall Risk Card (More prominent) --- */}
-      <Card className={`lg:col-span-1 xl:col-span-1 rounded-xl shadow-sm border-2 ${getRiskColorClass(overallRisk.level, 'border')} ${getRiskColorClass(overallRisk.level, 'bg')}`}>
+      <Card className={`lg:row-span-2 xl:row-span-2 rounded-xl shadow-sm border-2 ${getRiskColorClass(overallRisk.level, 'border')} ${getRiskColorClass(overallRisk.level, 'bg')}`}>
          <CardHeader>
            <CardTitle className="text-center text-sm font-medium text-muted-foreground">Overall Risk Score</CardTitle>
          </CardHeader>
@@ -208,7 +208,7 @@ export default function Dashboard() {
 
 
       {/* --- Privacy Tips (Spans columns on some layouts) --- */}
-       <Card className="lg:col-span-3 xl:col-span-4 rounded-xl shadow-sm"> {/* Adjust span as needed */}
+       <Card className="lg:col-span-2 xl:col-span-4 rounded-xl shadow-sm"> {/* Adjust span as needed */}
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Privacy Recommendations</CardTitle>
         </CardHeader>
