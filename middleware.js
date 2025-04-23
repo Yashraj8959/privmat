@@ -5,7 +5,9 @@ import { NextResponse } from "next/server";
 const isProtectedRoute = createRouteMatcher([
   '/data-vault(.*)',
   '/fake-data(.*)',
-  '/api/breaches(.*)',
+  '/breaches(.*)',
+  '/dashboard(.*)',
+  '/apps(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
