@@ -5,33 +5,67 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"; // Example display
+import toast from 'react-hot-toast'; // Optional for notifications
+import { Loader2, ShieldAlert, ShieldCheck } from 'lucide-react';
 
 const BreachChecker = () => {
-  const [email, setEmail] = useState('');
+  const [emailToCheck, setEmailToCheck] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [breaches, setBreaches] = useState(null); // null initially, array after check
+  const [breachResults, setBreachResults] = useState(null); // Stores results from direct API call
 
-  const handleCheckBreaches = async () => {
+  const handlePublicCheck = async () => {
+    if (!emailToCheck || !/\S+@\S+\.\S+/.test(emailToCheck)) {
+       toast.error("Please enter a valid email address.");
+       return;
+    }
+
     setIsLoading(true);
     setError(null);
-    setBreaches(null); // Reset previous results
+    setBreachResults(null); // Reset previous results
 
     try {
-      const response = await fetch('/api/breaches', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      const apiUrl = `https://api.xposedornot.com/v1/breach-analytics?email=${encodeURIComponent(emailToCheck)}`;
+      const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+              'Accept': 'application/json', // Good practice
+          }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      // Check for explicit "Not Found" first (API might return 200 with error field)
+      const data = await response.json(); // Try parsing JSON always
+
+      if (response.status === 404 || data.Error === "Not found") {
+        setBreachResults([]); // Set to empty array for "No breaches found" message
+        toast.success("No breaches found for this email.");
+        return; // Exit successfully
       }
-      const data = await response.json();
-      setBreaches(data.breaches);
+
+      // Handle other non-OK statuses after checking for 'Not Found'
+      if (!response.ok) {
+          throw new Error(data.Error || data.message || `HTTP error! status: ${response.status}`);
+      }
+
+      // Process successful response with breach details
+      let breachesFound = [];
+      if (data.ExposedBreaches && data.ExposedBreaches.breaches_details) {
+         breachesFound = data.ExposedBreaches.breaches_details.map(detail => ({
+             // Extract only the data needed for display
+             name: detail.breach,
+             date: detail.xposed_date ? new Date(parseInt(detail.xposed_date, 10), 0, 1).toISOString().split('T')[0] : 'N/A', // Handle date parsing carefully
+             description: detail.details || "No description available.",
+             compromisedData: detail.xposed_data?.split(';') || [],
+         }));
+      }
+      setBreachResults(breachesFound);
+
+
     } catch (err) {
+      console.error("Direct breach check error:", err);
       setError(err.message);
+      toast.error(`Error checking breaches: ${err.message}`);
+      setBreachResults(null); // Clear results on error
     } finally {
       setIsLoading(false);
     }
@@ -41,35 +75,35 @@ const BreachChecker = () => {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle>Check for Data Breaches</CardTitle>
-        <CardDescription>Enter an email address to see if it has been exposed in known data breaches.</CardDescription>
+        <CardDescription>Instantly check if an email address to see if it has been exposed in known data breaches.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 mb-4">
           <Input
             type="email"
             placeholder="Enter email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={emailToCheck}
+            onChange={(e) => setEmailToCheck(e.target.value)}
             disabled={isLoading}
           />
-          <Button onClick={handleCheckBreaches} disabled={isLoading}>
+          <Button onClick={handlePublicCheck} disabled={isLoading}>
+            {isLoading ? <Loader2 className='mr-2 h-4 w-4 animate-spin' /> : null}
             {isLoading ? "Checking..." : "Check"}
           </Button>
         </div>
         {error && <p className="text-red-500 text-sm">Error: {error}</p>}
 
         {/* Display Results */}
-        {breaches !== null && (
+        {breachResults !== null && (
           <div className="mt-4">
-            {breaches.length === 0 ? (
-              <p className="text-green-600">No breaches found for this email address.</p>
+            {breachResults.length === 0 ? (<p className="text-green-600 flex items-center"><ShieldCheck className='mr-2'/> <span> No breaches found for this email.</span> </p>
             ) : (
               <div>
-                <h4 className="font-semibold mb-2">Breaches Found ({breaches.length}):</h4>
+                <h4 className="font-semibold text-amber-500 mb-2 flex items-center"><ShieldAlert className='mr-2'/> <span>Warning:  {breachResults.length} Breaches Found</span></h4>
                 <Accordion type="single" collapsible className="w-full">
-                  {breaches.map((breach, index) => (
+                  {breachResults.map((breach, index) => (
                     <AccordionItem value={`item-${index}`} key={breach.id || index}>
-                      <AccordionTrigger>{breach.name} ({breach.date})</AccordionTrigger>
+                      <AccordionTrigger className={"text-"}>{breach.name} ({breach.date})</AccordionTrigger>
                       <AccordionContent>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{breach.description || "No description available."}</p>
                         <strong>Compromised Data:</strong>
