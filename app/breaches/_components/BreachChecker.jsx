@@ -72,9 +72,11 @@ const BreachChecker = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+
+    
+    <Card className="w-full max-w-lg mx-auto">
       <CardHeader>
-        <CardTitle>Check for Data Breaches</CardTitle>
+        <CardTitle>Check Any Email for Data Breaches</CardTitle>
         <CardDescription>Instantly check if an email address to see if it has been exposed in known data breaches.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
