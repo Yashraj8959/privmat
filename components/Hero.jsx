@@ -13,10 +13,12 @@ const HeroSection = () => {
           <h1 className="text-4xl font-extrabold md:text-5xl lg:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-400">
             <TypeAnimation
               sequence={[
-                'Your Privacy Matters',
+                'Feeling Exposed Online?',
                 1500,
-                'Take Control of Your Data',
+                'Regain Control with Privmat',
                 1500,
+                // 'Your Personal Privacy Command Center',
+                // 1500,
               ]}
               wrapper="span"
               speed={40}
@@ -30,12 +32,12 @@ const HeroSection = () => {
         <div className="flex justify-center space-x-4">
           <Link href="/dashboard">
             <Button size="lg" className="px-8">
-              Explore Dashboard
+            Get Started Free
             </Button>
           </Link>
           <Link href="/privacy-policy">
             <Button variant="outline" size="lg" className="px-8 text-gray-700 dark:text-gray-300">
-            Learn More
+            How it Works
             </Button>
           </Link>
         </div>

@@ -165,3 +165,39 @@ body {
   background-image: radial-gradient(#ffffff33 1px, #00091d 1px);
   background-size: 50px 50px;
 }
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards; /* Apply the animation */
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #a5b4fc;
+  border-radius: 4px;
+}
+
+/* Mobile Optimization for Scrollbars */
+@media (max-width: 768px) {
+  .custom-scrollbar {
+    padding: 0 16px;
+  }
+}
