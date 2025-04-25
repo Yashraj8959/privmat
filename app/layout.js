@@ -5,6 +5,7 @@ import HeaderServer from "@/components/HeaderServer";
 import { ClerkProvider } from "@clerk/nextjs";
 import {dark} from '@clerk/themes'
 import { Toaster } from "react-hot-toast"
+import Footer from "@/components/Footer";
 
 
 const geistSans = Geist({
@@ -53,6 +54,8 @@ export default function RootLayout({ children }) {
             {/* main content */}
             {children}
             <Toaster />
+            {/* Footer */}
+            <Footer />
 
           </ThemeProvider>
       </body>
