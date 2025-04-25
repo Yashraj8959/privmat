@@ -25,7 +25,7 @@ const ChatMessage = ({ msg, index }) => {
       )}
     >
       {msg.sender === "privmat" && msg.icon && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 dark:bg-[#0045b4]/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
           {React.cloneElement(msg.icon, { className: "h-5 w-5" })}
         </div>
       )}
@@ -34,7 +34,7 @@ const ChatMessage = ({ msg, index }) => {
   className={clsx(
     "p-3 rounded-xl text-sm leading-relaxed transition-shadow duration-300",
     msg.sender === "user"
-      ? "bg-indigo-600 text-white rounded-br-none"
+      ? "bg-[#0045b4] text-white rounded-br-none"
       : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-none",
     msg.sender === "privmat" && "shadow-[0_0_4px_#00eaff,0_0_8px_#00eaff]"
   )}

@@ -90,7 +90,7 @@ const HowItWorksChat = () => {
     };
   
   return (
-    <section className="py-8 md:py-24 bg-gradient-to-b from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-950/30">
+    <section className="py-8 md:py-24 bg-gradient-to-b from-gray-50 to-blue-50 dark:from-[#042350] dark:to-blue-950/30">
       <div className="container mx-auto px-4 md:px-6">
         {/* Flex Container for Text and Chat on Larger Screens */}
         <div className="flex flex-col md:flex-row items-center justify-center md:justify-between">
@@ -99,14 +99,14 @@ const HowItWorksChat = () => {
             <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">
               How Privmat Works (In a Nutshell)
             </h2>
-            <p className="text-lg text-muted-foreground text-center mb-12 md:mb-16 max-w-2xl mx-auto md:mx-0">
+            <p className="text-lg text-muted-foreground text-center mb-12 md:mb-16 max-w-2xl mx-auto ">
               Follow this quick chat to see how easy privacy management can be.
             </p>
           </div>
 
           {/* Right Section (Chat Card) */}
           <div className="md:w-1/2 w-full">
-            <Card className="shadow-lg rounded-lg overflow-hidden bg-white dark:bg-slate-900 relative">
+            <Card className="shadow-lg rounded-lg overflow-hidden bg-white dark:bg-slate-950 relative">
               <CardContent
                 ref={chatContainerRef}
                 className="p-4 md:p-6 space-y-4 h-[400px] md:h-[500px] overflow-y-auto scroll-smooth custom-scrollbar"
@@ -127,7 +127,7 @@ const HowItWorksChat = () => {
                 <div
                   onClick={resetConversation}
                   disabled={isResetting}
-                  className="absolute bottom-4 right-4 bg-indigo-600 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-all"
+                  className="absolute bottom-4 right-4 bg-[#0045b4] text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-all"
                 >
                   <RotateCcw className="h-6 w-6" />
                 </div>
