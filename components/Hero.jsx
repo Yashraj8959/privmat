@@ -33,9 +33,11 @@ const HeroSection = () => {
               Explore Dashboard
             </Button>
           </Link>
-          <Button variant="outline" size="lg" className="px-8 text-gray-700 dark:text-gray-300">
+          <Link href="/privacy-policy">
+            <Button variant="outline" size="lg" className="px-8 text-gray-700 dark:text-gray-300">
             Learn More
-          </Button>
+            </Button>
+          </Link>
         </div>
         
         <div className='hero-image-wrapper mt-10 md:mt-4 flex items-center justify-center' >
