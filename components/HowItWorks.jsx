@@ -17,88 +17,89 @@ const fullChatScript = [
 ];
 
 const HowItWorksChat = () => {
-  const [displayedMessages, setDisplayedMessages] = useState([]);
-  const [typing, setTyping] = useState(false);
-  const chatContainerRef = useRef(null);
-
-  // Function to start the chat and show messages sequentially
-  const startChat = () => {
-    setDisplayedMessages([]); // Ensure the chat starts fresh
-    let index = 0;
-
-    const displayNext = () => {
-      if (index < fullChatScript.length) {
-        const msg = fullChatScript[index];
-        const delay = 800 + Math.min(msg.text.length * 30, 3000); // Delay based on message length
-
-        setTyping(true);
-        setTimeout(() => {
-          setDisplayedMessages((prev) => [...prev, msg]);
-          setTyping(false);
-          index++;
-          setTimeout(displayNext, 300); // Delay between each message
-        }, delay);
-      }
+    const [displayedMessages, setDisplayedMessages] = useState([]);
+    const [typing, setTyping] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
+    const chatContainerRef = useRef(null);
+    const timeoutsRef = useRef([]); // Store timeout IDs
+  
+    // Helper to clear all pending timeouts
+    const clearAllTimeouts = () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
     };
-
-    setTimeout(() => {
-      // Add the first message immediately after the initial delay
-      displayNext();
-    }, 500); // Initial delay to start chat
-  };
-
-  useEffect(() => {
-    startChat();
-  }, []);
-
-  // Auto scroll the chat container when new messages are added
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [displayedMessages, typing]);
-
-  const resetConversation = () => {
-    setDisplayedMessages([]); // Clear any previous messages
-    setTyping(false); // Ensure typing animation is reset
-
-    let index = 0;
-
-    const displayNext = () => {
-      if (index < fullChatScript.length) {
-        const msg = fullChatScript[index];
-        const delay = 800 + Math.min(msg.text.length * 30, 3000); // Delay based on message length
-
-        setTyping(true);
-        setTimeout(() => {
-          setDisplayedMessages((prev) => [...prev, msg]);
-          setTyping(false);
-          index++;
-          setTimeout(displayNext, 300); // Delay between each message
-        }, delay);
-      }
+  
+    const startChat = () => {
+      setDisplayedMessages([]);
+      let index = 0;
+  
+      const displayNext = () => {
+        if (index < fullChatScript.length) {
+          const msg = fullChatScript[index];
+          const delay = 800 + Math.min(msg.text.length * 30, 3000);
+  
+          setTyping(true);
+          const timeoutId = setTimeout(() => {
+            setDisplayedMessages(prev => [...prev, msg]);
+            setTyping(false);
+            index++;
+            const nextTimeoutId = setTimeout(displayNext, 300);
+            timeoutsRef.current.push(nextTimeoutId);
+          }, delay);
+          timeoutsRef.current.push(timeoutId);
+        }
+      };
+  
+      const initialTimeout = setTimeout(displayNext, 500);
+      timeoutsRef.current.push(initialTimeout);
     };
-
-    // Immediately show the first message, and then start the rest
-    setTimeout(() => {
-      displayNext();
-    }, 500); // Delay before starting
-  };
-
+  
+    useEffect(() => {
+      startChat();
+      return clearAllTimeouts; // Clean up on unmount
+    }, []);
+  
+    const resetConversation = () => {
+      if (isResetting) return;
+      setIsResetting(true);
+      clearAllTimeouts();
+      setDisplayedMessages([]);
+      setTyping(false);
+  
+      let index = 0;
+      const displayNext = () => {
+        if (index < fullChatScript.length) {
+          const msg = fullChatScript[index];
+          const delay = 800 + Math.min(msg.text.length * 30, 3000);
+  
+          setTyping(true);
+          const timeoutId = setTimeout(() => {
+            setDisplayedMessages(prev => [...prev, msg]);
+            setTyping(false);
+            index++;
+            const nextTimeoutId = setTimeout(displayNext, 300);
+            timeoutsRef.current.push(nextTimeoutId);
+          }, delay);
+          timeoutsRef.current.push(timeoutId);
+        } else {
+          setIsResetting(false);
+        }
+      };
+      const initialTimeout = setTimeout(displayNext, 500);
+      timeoutsRef.current.push(initialTimeout);
+    };
+  
   return (
     <section className="py-8 md:py-24 bg-gradient-to-b from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-950/30">
-      <div className="container mx-auto px-8 md:px-6 lg:px-14">
+      <div className="container mx-auto px-4 md:px-6">
         {/* Flex Container for Text and Chat on Larger Screens */}
         <div className="flex flex-col md:flex-row items-center justify-center md:justify-between">
           {/* Left Section (Text) */}
-          <div className="md:w-1/2 mb-2 md:mb-0 text-center md:text-left">
+          <div className="md:w-1/2 mb-8 md:mb-0 text-center md:text-left">
             <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">
               How Privmat Works (In a Nutshell)
             </h2>
-            <p className="text-lg text-muted-foreground text-center mb-4 md:mb-8 max-w-2xl mx-auto md:mx-0">
+            <p className="text-lg text-muted-foreground text-center mb-12 md:mb-16 max-w-2xl mx-auto md:mx-0">
               Follow this quick chat to see how easy privacy management can be.
             </p>
           </div>
@@ -125,6 +126,7 @@ const HowItWorksChat = () => {
                 {/* Reset/Replay Button inside the chat container */}
                 <div
                   onClick={resetConversation}
+                  disabled={isResetting}
                   className="absolute bottom-4 right-4 bg-indigo-600 text-white p-3 rounded-full shadow-lg cursor-pointer hover:bg-indigo-700 transition-all"
                 >
                   <RotateCcw className="h-6 w-6" />
