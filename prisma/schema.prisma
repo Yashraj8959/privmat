@@ -105,7 +105,7 @@ model UserBreach {
   userId    String
   dataBreach DataBreach @relation(fields: [dataBreachId], references: [id])
   dataBreachId String
-  emailCompromised String[]  // <- change from String to String[]
+  emailCompromised String  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
