@@ -7,7 +7,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t bg-slate-950/80 backdrop-blur-sm supports-[backdrop-filter]:bg-slate-950/60 dark:border-gray-800">
+    <footer className="border-t bg-slate-950/80 backdrop-blur-sm supports-[backdrop-filter]:bg-slate-950/60 dark:border-gray-800 mt-8">
       <div className="container mx-auto px-4 py-10 flex flex-col items-center text-center gap-4">
         {/* Logo */}
         <Link href="/" className="inline-block">
