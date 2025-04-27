@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Orbitron, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import HeaderServer from "@/components/HeaderServer";
@@ -8,14 +8,21 @@ import { Toaster } from "react-hot-toast"
 import Footer from "@/components/Footer";
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "600", "700"], // You can customize
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  weight: ["400", "500", "600"], // You can customize
+});
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
+  subsets: ["latin"],
+  weight: ["400", "700"], // You can customize
 });
 
 export const metadata = {
@@ -32,7 +39,7 @@ export default function RootLayout({ children }) {
     >
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950`}
+        className={` ${inter.variable} ${spaceGrotesk.variable} antialiased bg-slate-950`}
       >
         <ThemeProvider
             attribute="class"

@@ -1,10 +1,20 @@
 @import "tailwindcss";
 
 
-body {
+/* body {
   font-family: Arial, Helvetica, sans-serif;
+} */
+/* Apply Orbitron to all headings (h1, h2, h3, etc.) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 700; /* Adjust based on your needs */
 }
 
+/* Apply Inter to all body text (p, span, etc.) */
+p, span, div, a, li {
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 400; /* Adjust based on your needs */
+}
 @theme {
   --color-muted:          hsl(0, 0%, 14.9%);
   --color-background:         hsl(0 0% 3.9%);
