@@ -6,7 +6,7 @@ const FeaturesSection = () => {
     <section className="w-full py-12 md:py-24 lg:py-32 bg-transparent"> {/* Added subtle background */}
       <div className="container mx-auto px-8 md:px-6">
         <div className="max-w-xl mx-auto text-center mb-12 md:mb-16">
-          <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl">
+          <h2 className="text-2xl font-bold track sm:text-3xl md:text-4xl">
             Protect What Matters Most 
             <br />
             - Your Privacy

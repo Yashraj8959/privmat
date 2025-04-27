@@ -109,6 +109,14 @@ body {
 
 /* Utilities (Without @apply) */
 @layer utilities {
+  
+  @keyframes text-glow {
+    0%, 100% { text-shadow: 0 0 8px #60a5fa, 0 0 16px #3b82f6; }
+    50% { text-shadow: 0 0 12px #60a5fa, 0 0 24px #3b82f6; }
+  }
+  .animate-text-glow {
+    animation: text-glow 2.5s infinite alternate;
+  }
   .gradient {
     background-image: linear-gradient(
       to bottom,
@@ -138,48 +146,6 @@ body {
 
 
 
-.dots-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-      circle,
-      hsla(0, 0%, 100%, 0.1) 1px,
-      transparent 1px
-    ),
-    radial-gradient(circle, hsla(0, 0%, 100%, 0.1) 1px, transparent 1px);
-  background-size: 50px 50px;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.dots{
-  position: absolute;
-  top: 0;
-  z-index: -2;
-  height: 100vh;
-  width: 100vw;
-  background-color: #000000;
-  background-image: radial-gradient(#ffffff33 1px, #00091d 1px);
-  background-size: 50px 50px;
-}
-
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fade-in-up 0.5s ease-out forwards; /* Apply the animation */
-}
 
 /* Custom Scrollbar Styles */
 .custom-scrollbar::-webkit-scrollbar {

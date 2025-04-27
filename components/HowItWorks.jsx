@@ -103,7 +103,7 @@ const HowItWorksChat = () => {
 
   return (
     <section className="py-8 md:py-16 bg-transparent">
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-8 md:px-6">
         <div className="flex flex-col md:flex-row items-center justify-center md:justify-between">
           {/* Left Section (Text) */}
           <div className="md:w-1/2 mb-8 md:mb-0 text-center md:text-left">
