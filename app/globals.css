@@ -9,7 +9,10 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-space-grotesk), sans-serif;
   font-weight: 700; /* Adjust based on your needs */
 }
-
+.headfont span {
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-weight: 900; /* Adjust based on your needs */
+}
 /* Apply Inter to all body text (p, span, etc.) */
 p, span, div, a, li {
   font-family: var(--font-inter), sans-serif;

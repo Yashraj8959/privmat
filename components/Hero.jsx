@@ -17,7 +17,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="text-4xl font-extrabold md:text-5xl lg:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-sky-400 to-blue-600 "
+            className="text-4xl font-space-grotesk font-extrabold headfont md:text-5xl lg:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-indigo-400 via-sky-400 to-blue-600 "
           >
             <TypeAnimation
               sequence={[

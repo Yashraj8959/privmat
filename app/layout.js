@@ -17,7 +17,7 @@ const inter = Inter({
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
-  weight: ["400", "500", "600"], // You can customize
+  weight: ["400", "500", "600","700",], // You can customize
 });
 const orbitron = Orbitron({
   variable: "--font-orbitron",
