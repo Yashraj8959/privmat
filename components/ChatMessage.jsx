@@ -4,11 +4,8 @@ import React from "react";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 
-const ChatMessage = ({ msg, index }) => {
+const ChatMessage = ({ msg, index, isTyping }) => {
   if (!msg || !msg.sender) return null; // 🔐 safety check
-
-  // Neon glow class for messages
-//   const neonGlowClass = "text-shadow-glow";
 
   return (
     <motion.div
@@ -30,19 +27,29 @@ const ChatMessage = ({ msg, index }) => {
         </div>
       )}
 
-<div
-  className={clsx(
-    "p-3 rounded-xl text-sm leading-relaxed transition-shadow duration-300",
-    msg.sender === "user"
-      ? "bg-[#0045b4] text-white rounded-br-none"
-      : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-none",
-    msg.sender === "privmat" && "shadow-[0_0_4px_#00eaff,0_0_8px_#00eaff]"
-  )}
->
-  {msg.text}
-</div>
+      <div
+        className={clsx(
+          "p-3 rounded-xl text-sm leading-relaxed transition-shadow duration-300",
+          msg.sender === "user"
+            ? "bg-[#0045b4] text-white rounded-br-none"
+            : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-none",
+          msg.sender === "privmat" && "shadow-[0_0_4px_#00eaff,0_0_8px_#00eaff]"
+        )}
+      >
+        {isTyping ? <TypingDots /> : msg.text}
+      </div>
     </motion.div>
   );
 };
+
+function TypingDots() {
+  return (
+    <div className="flex gap-1 items-center justify-center">
+      <span className="h-2 w-2 rounded-full bg-current animate-bounce" style={{ animationDelay: "0s" }}></span>
+      <span className="h-2 w-2 rounded-full bg-current animate-bounce" style={{ animationDelay: "0.2s" }}></span>
+      <span className="h-2 w-2 rounded-full bg-current animate-bounce" style={{ animationDelay: "0.4s" }}></span>
+    </div>
+  );
+}
 
 export default ChatMessage;

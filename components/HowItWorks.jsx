@@ -17,89 +17,100 @@ const fullChatScript = [
 ];
 
 const HowItWorksChat = () => {
-    const [displayedMessages, setDisplayedMessages] = useState([]);
-    const [typing, setTyping] = useState(false);
-    const [isResetting, setIsResetting] = useState(false);
-    const chatContainerRef = useRef(null);
-    const timeoutsRef = useRef([]); // Store timeout IDs
-  
-    // Helper to clear all pending timeouts
-    const clearAllTimeouts = () => {
-      timeoutsRef.current.forEach(clearTimeout);
-      timeoutsRef.current = [];
+  const [displayedMessages, setDisplayedMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const chatContainerRef = useRef(null);
+  const timeoutsRef = useRef([]);
+
+  const clearAllTimeouts = () => {
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+  };
+
+  const startChat = () => {
+    setDisplayedMessages([]);
+    let index = 0;
+
+    const displayNext = () => {
+      if (index < fullChatScript.length) {
+        const msg = fullChatScript[index];
+        const delay = 800 + Math.min(msg.text.length * 30, 3000);
+
+        setIsTyping(true);
+
+        const typingTimeout = setTimeout(() => {
+          setDisplayedMessages(prev => [...prev, msg]);
+          setIsTyping(false);
+          index++;
+
+          const nextTimeout = setTimeout(displayNext, 300);
+          timeoutsRef.current.push(nextTimeout);
+        }, delay);
+
+        timeoutsRef.current.push(typingTimeout);
+      }
     };
-  
-    const startChat = () => {
-      setDisplayedMessages([]);
-      let index = 0;
-  
-      const displayNext = () => {
-        if (index < fullChatScript.length) {
-          const msg = fullChatScript[index];
-          const delay = 800 + Math.min(msg.text.length * 30, 3000);
-  
-          setTyping(true);
-          const timeoutId = setTimeout(() => {
-            setDisplayedMessages(prev => [...prev, msg]);
-            setTyping(false);
-            index++;
-            const nextTimeoutId = setTimeout(displayNext, 300);
-            timeoutsRef.current.push(nextTimeoutId);
-          }, delay);
-          timeoutsRef.current.push(timeoutId);
-        }
-      };
-  
-      const initialTimeout = setTimeout(displayNext, 500);
-      timeoutsRef.current.push(initialTimeout);
+
+    const initialTimeout = setTimeout(displayNext, 500);
+    timeoutsRef.current.push(initialTimeout);
+  };
+
+  useEffect(() => {
+    startChat();
+    return clearAllTimeouts;
+  }, []);
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [displayedMessages, isTyping]);
+
+  const resetConversation = () => {
+    if (isResetting) return;
+    setIsResetting(true);
+    clearAllTimeouts();
+    setDisplayedMessages([]);
+    setIsTyping(false);
+
+    let index = 0;
+
+    const displayNext = () => {
+      if (index < fullChatScript.length) {
+        const msg = fullChatScript[index];
+        const delay = 800 + Math.min(msg.text.length * 30, 3000);
+
+        setIsTyping(true);
+
+        const typingTimeout = setTimeout(() => {
+          setDisplayedMessages(prev => [...prev, msg]);
+          setIsTyping(false);
+          index++;
+
+          const nextTimeout = setTimeout(displayNext, 300);
+          timeoutsRef.current.push(nextTimeout);
+        }, delay);
+
+        timeoutsRef.current.push(typingTimeout);
+      } else {
+        setIsResetting(false);
+      }
     };
-  
-    useEffect(() => {
-      startChat();
-      return clearAllTimeouts; // Clean up on unmount
-    }, []);
-  
-    const resetConversation = () => {
-      if (isResetting) return;
-      setIsResetting(true);
-      clearAllTimeouts();
-      setDisplayedMessages([]);
-      setTyping(false);
-  
-      let index = 0;
-      const displayNext = () => {
-        if (index < fullChatScript.length) {
-          const msg = fullChatScript[index];
-          const delay = 800 + Math.min(msg.text.length * 30, 3000);
-  
-          setTyping(true);
-          const timeoutId = setTimeout(() => {
-            setDisplayedMessages(prev => [...prev, msg]);
-            setTyping(false);
-            index++;
-            const nextTimeoutId = setTimeout(displayNext, 300);
-            timeoutsRef.current.push(nextTimeoutId);
-          }, delay);
-          timeoutsRef.current.push(timeoutId);
-        } else {
-          setIsResetting(false);
-        }
-      };
-      const initialTimeout = setTimeout(displayNext, 500);
-      timeoutsRef.current.push(initialTimeout);
-    };
-  
+
+    const initialTimeout = setTimeout(displayNext, 500);
+    timeoutsRef.current.push(initialTimeout);
+  };
+
   return (
-    <section className="py-8 md:py-24 bg-gradient-to-b from-gray-50 to-blue-50 dark:from-[#042350] dark:to-blue-950/30">
+    <section className="py-8 md:py-16 bg-transparent">
       <div className="container mx-auto px-4 md:px-6">
-        {/* Flex Container for Text and Chat on Larger Screens */}
         <div className="flex flex-col md:flex-row items-center justify-center md:justify-between">
           {/* Left Section (Text) */}
           <div className="md:w-1/2 mb-8 md:mb-0 text-center md:text-left">
             <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">
               How Privmat Works (In a Nutshell)
             </h2>
-            <p className="text-lg text-muted-foreground text-center mb-12 md:mb-16 max-w-2xl mx-auto ">
+            <p className="text-lg text-muted-foreground text-center mb-12 md:mb-16 max-w-2xl mx-auto">
               Follow this quick chat to see how easy privacy management can be.
             </p>
           </div>
@@ -112,18 +123,31 @@ const HowItWorksChat = () => {
                 className="p-4 md:p-6 space-y-4 h-[400px] md:h-[500px] overflow-y-auto scroll-smooth custom-scrollbar"
               >
                 {displayedMessages.map((msg, index) => (
-                  <ChatMessage key={index} msg={msg} index={index} />
+                  <ChatMessage
+                    key={index}
+                    msg={msg}
+                    index={index}
+                    isTyping={false}
+                  />
                 ))}
 
-                {typing && (
-                  <div className="text-sm text-gray-500 dark:text-gray-400 italic animate-pulse">
-                    <span className="block bg-gray-200 dark:bg-gray-700 w-16 h-4 rounded"></span>
-                  </div>
+                {isTyping && (
+                  <ChatMessage
+                    key={"typing"}
+                    msg={{
+                      sender: "privmat",
+                      text: "",
+                      icon: fullChatScript[displayedMessages.length]?.icon || null,
+                    }}
+                    index={displayedMessages.length}
+                    isTyping={true}
+                  />
                 )}
 
+                {/* Spacer */}
                 <div className="h-4"></div>
 
-                {/* Reset/Replay Button inside the chat container */}
+                {/* Reset/Replay Button */}
                 <div
                   onClick={resetConversation}
                   disabled={isResetting}
