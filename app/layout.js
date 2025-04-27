@@ -32,30 +32,26 @@ export default function RootLayout({ children }) {
     >
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950`}
       >
         <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
-            {/* <div className="fixed inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div> */}
-            <div className="fixed -z-50 h-full w-full bg-slate-950">
-            {/* Left Gradient Circle */}
-              <div className="absolute top-[-20%] left-[-40%] sm:left-[-30%] md:left-[-20%] h-[60vw] w-[60vw] max-w-[500px] max-h-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]" />
-  
-            {/* Right Gradient Circle */}
-              <div className="absolute top-[-20%] right-[-40%] sm:right-[-30%] md:right-[-20%] h-[60vw] w-[60vw] max-w-[500px] max-h-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,182,.15),rgba(255,255,255,0))]" />
+            <div className="absolute  -z-50 h-full w-full bg-slate-950">
+                <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
             </div>
-
             {/* header */}
             <HeaderServer />
             {/* main content */}
             {children}
             <Toaster />
             {/* Footer */}
-            <Footer />
+            {/* Slight fade into footer */}
+            <div className="h-32 bg-gradient-to-b from-slate-900 to-slate-950"><Footer /></div>
+            
 
           </ThemeProvider>
       </body>
