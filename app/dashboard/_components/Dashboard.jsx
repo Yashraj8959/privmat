@@ -14,7 +14,6 @@ import {
   ArrowRight,
   TrendingUp, // Example for Tips
 } from "lucide-react";
-import clsx from "clsx";
 import Link from 'next/link';
 import { useUser } from "@clerk/nextjs";
 
@@ -290,7 +289,7 @@ export default function Dashboard() {
 
 
       {/* --- Metric Cards (Improved Layout) --- */}
-      <Card className="rounded-xl shadow-sm">
+      <Card className="rounded-xl shadow-md dark:bg-gray-800/30 border dark:border-gray-800">
          <CardHeader>
            <CardTitle className="text-sm font-medium text-muted-foreground">Tracked Apps</CardTitle>
          </CardHeader>
@@ -307,7 +306,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="rounded-xl shadow-sm">
+      <Card className="rounded-xl shadow-md dark:bg-gray-800/30 border dark:border-gray-800">
          <CardHeader>
            <CardTitle className="text-sm font-medium text-muted-foreground">Affected by Breaches</CardTitle>
          </CardHeader>
@@ -324,7 +323,7 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card className="rounded-xl shadow-sm">
+      <Card className="rounded-xl shadow-md dark:bg-gray-800/30 border dark:border-gray-800">
          <CardHeader>
            <CardTitle className="text-sm font-medium text-muted-foreground">Vault Items</CardTitle>
          </CardHeader>
