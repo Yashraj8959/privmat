@@ -14,28 +14,14 @@ export async function POST(req) {
 
     try {
         // --- 1. Authenticate and Get User from DB ---
-        const { userId: clerkUserId } = await auth(req); // Use auth() in App Router
-        console.log("🔐 check-my-email: Clerk User ID =", clerkUserId);
-
-        if (!clerkUserId) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const user = await checkUser();
+        if (!user) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Use checkUser to get the user from *your* database
-        // This ensures the user exists and retrieves their stored email
-        const dbUser = await prisma.user.findUnique({
-                where: { clerkUserId: clerkUserId },
-            });
         
-            if (!dbUser) {
-                return NextResponse.json({ error: "User not found in database" }, { status: 404 });
-            }
-        if (!dbUser?.id || !dbUser.email) {
-            console.error("check-my-email: Failed to find user or email in DB for Clerk ID:", clerkUserId);
-            return NextResponse.json({ error: "User not found or missing email in local database" }, { status: 404 });
-        }
-        dbUserId = dbUser.id;
-        userEmail = dbUser.email; // Use the email stored in your database
+        dbUserId = user.id;
+        userEmail = user.email; // Use the email stored in your database
 
         console.log(`check-my-email: Checking email "${userEmail}" for user ID "${dbUserId}"`);
 

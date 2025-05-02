@@ -10,23 +10,15 @@ export async function GET(req) {
     let dbUserId = null;
     try {
         // --- 1. Authenticate and Ensure User Exists in DB ---
-        const { userId: clerkUserId } = await auth(req);
-        if (!clerkUserId) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        const user = await checkUser();
+        if (!user) {
+          return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const dbUser = await prisma.user.findUnique({
-            where: { clerkUserId: clerkUserId },
-        });
-        if (!dbUser?.id) {
-            console.error("GET /user-history: User sync failed for Clerk ID:", clerkUserId);
-            return NextResponse.json({ error: "User not found in local database" }, { status: 404 });
-        }
-        dbUserId = dbUser.id;
 
         // --- 2. Fetch stored UserBreach records for the user ---
         const userBreaches = await prisma.userBreach.findMany({
-            where: { userId: dbUserId },
+            where: { userId: user.id },
             orderBy: { dataBreach: { breachDate: 'desc' } }, // Order by breach date
             include: {
                 dataBreach: true, // Include the details of each linked breach
