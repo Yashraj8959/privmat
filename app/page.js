@@ -1,7 +1,9 @@
 import  HeroSection  from "@/components/Hero";
 import HowItWorks from "@/components/HowItWorks";
 import FeaturesSection from "@/components/FeaturesSection";
-export default function Home() {
+import { checkUser } from "@/lib/checkUser";
+export default async function Home() {
+  await checkUser();
   return (
     <>
         <div className="relative overflow-hidden">
