@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"; // Example display
 import toast from 'react-hot-toast'; // Optional for notifications
 import { Loader2, ShieldAlert, ShieldCheck } from 'lucide-react';
+import axios from 'axios'; // Optional for API calls
 
 const BreachChecker = () => {
   const [emailToCheck, setEmailToCheck] = useState('');
@@ -16,60 +17,57 @@ const BreachChecker = () => {
 
   const handlePublicCheck = async () => {
     if (!emailToCheck || !/\S+@\S+\.\S+/.test(emailToCheck)) {
-       toast.error("Please enter a valid email address.");
-       return;
+      toast.error("Please enter a valid email address.");
+      return;
     }
-
+  
     setIsLoading(true);
     setError(null);
-    setBreachResults(null); // Reset previous results
-
+    setBreachResults(null);
+  
     try {
-      const apiUrl = `https://api.xposedornot.com/v1/breach-analytics?email=${encodeURIComponent(emailToCheck)}`;
-      const response = await fetch(apiUrl, {
-          method: 'GET',
-          headers: {
-              'Accept': 'application/json', // Good practice
-          }
-      });
-
-      // Check for explicit "Not Found" first (API might return 200 with error field)
-      const data = await response.json(); // Try parsing JSON always
-
-      if (response.status === 404 || data.Error === "Not found") {
-        setBreachResults([]); // Set to empty array for "No breaches found" message
+      const response = await axios.get(`https://api.xposedornot.com/v1/breach-analytics?email=${emailToCheck}`);
+      const data = response.data;
+  
+      if (data.Error === "Not found") {
+        setBreachResults([]); // No breaches
         toast.success("No breaches found for this email.");
-        return; // Exit successfully
+        return;
       }
-
-      // Handle other non-OK statuses after checking for 'Not Found'
-      if (!response.ok) {
-          throw new Error(data.Error || data.message || `HTTP error! status: ${response.status}`);
+  
+      if (data.Error) {
+        throw new Error(data.Error);
       }
-
-      // Process successful response with breach details
+  
       let breachesFound = [];
-      if (data.ExposedBreaches && data.ExposedBreaches.breaches_details) {
-         breachesFound = data.ExposedBreaches.breaches_details.map(detail => ({
-             // Extract only the data needed for display
-             name: detail.breach,
-             date: detail.xposed_date ? new Date(parseInt(detail.xposed_date, 10), 0, 1).toISOString().split('T')[0] : 'N/A', // Handle date parsing carefully
-             description: detail.details || "No description available.",
-             compromisedData: detail.xposed_data?.split(';') || [],
-         }));
+      if (data.ExposedBreaches?.breaches_details?.length > 0) {
+        breachesFound = data.ExposedBreaches.breaches_details.map((detail) => ({
+          name: detail.breach,
+          date: detail.xposed_date
+            ? new Date(parseInt(detail.xposed_date, 10), 0, 1).toISOString().split('T')[0]
+            : 'N/A',
+          description: detail.details || "No description available.",
+          compromisedData: detail.xposed_data?.split(';') || [],
+        }));
       }
+  
       setBreachResults(breachesFound);
-
-
     } catch (err) {
-      console.error("Direct breach check error:", err);
-      setError(err.message);
-      toast.error(`Error checking breaches: ${err.message}`);
-      setBreachResults(null); // Clear results on error
+      const message =
+        err.response?.data?.Error ||
+        err.response?.data?.message ||
+        err.message ||
+        "Unknown error";
+      console.error("Error checking breaches:", message);
+      setError(message);
+      toast.error(`Error: ${message}`);
+      setBreachResults(null);
     } finally {
       setIsLoading(false);
     }
   };
+  
+  
 
   return (
 
