@@ -9,9 +9,9 @@ export default function Loading() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <div className="relative">
+      <div className="relative flex items-center justify-center">
+        <div className="absolute w-24 h-24 shimmer rounded-full" />
         <Lock className="w-16 h-16 text-fuchsia-400 animate-pulse" />
-        <div className="absolute inset-0 shimmer rounded-full" />
       </div>
       <p className="mt-4 text-lg font-semibold text-fuchsia-300">
         Taking Control of your privacy...
