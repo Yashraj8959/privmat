@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@/lib/generated/prisma"; // Assuming default generation path
 import { NextResponse } from "next/server";
 import axios from "axios";
+import { checkUser } from "@/lib/checkUser"; // Import the checkUser function
 
 const prisma = new PrismaClient();
 

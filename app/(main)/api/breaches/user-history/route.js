@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { PrismaClient } from "@/lib/generated/prisma";
 import { NextResponse } from "next/server";
+import { checkUser } from "@/lib/checkUser"; // Import the checkUser function
 
 const prisma = new PrismaClient();
 
