@@ -25,9 +25,19 @@ const orbitron = Orbitron({
   weight: ["400", "700"], // You can customize
 });
 
+
+// --- SEO ---
 export const metadata = {
-  title: "PrivMat",
-  description: "Your Privacy Matters",
+  // **Title Tag:** Include brand name and core purpose
+  title: {
+    default: 'Privmat: Your Personal Privacy Dashboard & Control Center', // Default title
+    template: '%s | Privmat', // Template for page-specific titles
+  },
+  // **Meta Description:** General overview of the site's value
+  description: "Take control of your online privacy with Privmat. Track app data sharing, check for data breaches, generate fake data, and securely store credentials in your personal dashboard.",
+  // **Keywords (Less impactful now, but doesn't hurt):**
+  keywords: ['privacy dashboard', 'data breach check', 'fake data generator', 'app tracking', 'online privacy', 'data security', 'credential vault'],
+  // Add other metadata like Open Graph, Twitter cards later
 };
 
 export default function RootLayout({ children }) {
