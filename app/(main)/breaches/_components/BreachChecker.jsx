@@ -26,7 +26,7 @@ const BreachChecker = () => {
     setBreachResults(null);
   
     try {
-      const response = await axios.get(`https://api.xposedornot.com/v1/breach-analytics?email=${emailToCheck}`);
+      const response = await axios.get(`/api/breaches/check-new-email?email=${emailToCheck}`);
       const data = response.data;
   
       if (data.Error === "Not found") {
