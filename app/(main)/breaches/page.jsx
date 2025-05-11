@@ -1,5 +1,4 @@
-import BreachChecker from "./_components/BreachChecker";
-import MyBreaches from "./_components/MyBreaches";
+import PublicEmailChecker from "./_components/BreachCheckerPublic";
 
 // --- SEO ---
 // Use generateMetadata if you need async data, otherwise export metadata directly
@@ -17,8 +16,8 @@ export default function DataBreachPage() {
       <h1 className="text-3xl font-bold tracking-tighter text-center mb-6">
         Check Data Breaches
       </h1>
-      <MyBreaches />
-      <BreachChecker />
+      {/* <MyBreaches /> */}
+      <PublicEmailChecker />
     </div>
   );
 }
